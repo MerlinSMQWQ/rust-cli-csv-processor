@@ -2,7 +2,7 @@
  * @Author: MerlinSMQWQ MerlinSMQWQ@proton.me
  * @Date: 2025-12-09 23:25:13
  * @LastEditors: MerlinSMQWQ MerlinSMQWQ@proton.me
- * @LastEditTime: 2025-12-10 21:02:32
+ * @LastEditTime: 2025-12-10 21:04:40
  * @FilePath: \rust-cli-csv-processor\src\main.rs
  * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
  */
@@ -47,8 +47,6 @@ struct  CsvOpts {
 
 // 定义一个数据结构用于存放CSV解析以后的数据
 #[derive(Debug, Deserialize, Serialize)]
-// 这里也可以使用rename_all对整个User的元素进行映射，比如这里使用lowercase将所有元素对应到小写上去
-#[serde(rename_all = "lowercase")]
 struct User {
     nackname: String,
     id: usize,
