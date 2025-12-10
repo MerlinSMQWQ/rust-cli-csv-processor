@@ -48,7 +48,7 @@ struct  CsvOpts {
 // 定义一个数据结构用于存放CSV解析以后的数据
 #[derive(Debug, Deserialize, Serialize)]
 struct User {
-    nackname: String,
+    nickname: String,
     id: usize,
 }
 
