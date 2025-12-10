@@ -22,3 +22,6 @@ csv主要有两种写法：
     - 基于记录的读写方式：`StringRecord` : 以字符串形式处理 CSV 记录，`ByteRecord` : 以字节形式处理 CSV 记录，适合简单的 CSV 处理需求，直接操作行数据
     - 基于 serde 的序列化方式：结合 `serde` crate 使用，可以将 CSV 数据直接序列化/反序列化为自定义的结构体，通过 `#[derive Deserialize, Serialize]` 实现，更适合结构化数据处理，类型安全更好
 这里我们使用第二种写法。
+
+# Rust如何将CSV文件解析为json文件
+我们使用的是serde-json这个crate，这个crate非常强大，我们通常用它来处理json，这个项目中也是使用serde-json
