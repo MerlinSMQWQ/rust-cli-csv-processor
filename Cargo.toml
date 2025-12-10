@@ -1,6 +1,7 @@
 [package]
 name = "rust-cli-csv-processor"
 version = "0.1.0"
+authors = ["MerlinQWQ <MerlinSMQWQ@proton.me>"]
 edition = "2024"
 
 [dependencies]
