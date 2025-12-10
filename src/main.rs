@@ -2,7 +2,7 @@
  * @Author: MerlinSMQWQ MerlinSMQWQ@proton.me
  * @Date: 2025-12-09 23:25:13
  * @LastEditors: MerlinSMQWQ MerlinSMQWQ@proton.me
- * @LastEditTime: 2025-12-10 18:09:05
+ * @LastEditTime: 2025-12-10 18:33:11
  * @FilePath: \rust-cli-csv-processor\src\main.rs
  * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
  */
@@ -21,20 +21,21 @@ struct Opts {
 // clap拥有subcommand的概念，可以实现git push这样的多层次的命令，push是git的子命令，每个子命令都可以有自己的参数
 #[derive(Debug, Parser)]
 enum SubCommand {
+    /// `value_parser` 是 clap 库中的一个重要属性，用于自定义参数值的解析和验证。
     #[command(name = "csv", about = "Show CSV or convert CSV to other formats.")]
     Csv(CsvOpts)
 }
 
 #[derive(Debug, Parser)]
 struct  CsvOpts {
-    #[arg(short, long)]
+    #[arg(short, long, value_parser = verify_input_file)]
     input: String,
     
     /// `default_value` 用于直接提供一个字符串形式的默认值，适用于可以直接从字符串解析为目标类型的参数，例如是"output.json" 是一个字符串，默认值会根据目标类型自动解析。
     #[arg(short, long, default_value="output.json")]
     output: String,
 
-    #[arg(short, long, default_value_t = 't')]
+    #[arg(short, long, default_value_t = ',')]
     delimiter: char,
 
     /// `default_value_t` 用于提供一个具体的目标类型值，通常是一个实现了Defaut trait或者通过表达式生成的值，适合复杂类型或者需要显示构造默认值的情况，比如这里的true，就不需要任何转换，可以直接作为header的值
@@ -42,6 +43,16 @@ struct  CsvOpts {
     #[arg(short='H', long, default_value_t = true)]
     header: bool,
 }
+
+// 验证输入的csv文件是否存在
+fn verify_input_file(input_file: &str) ->  Result<String, &'static str>{
+    if std::path::Path::new(input_file).exists() {
+        Ok(input_file.into())
+    } else {
+        Err("File does not exist!")
+    }
+}
+
 
 fn main() {
     let opts = Opts::parse();
