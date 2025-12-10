@@ -2,7 +2,7 @@
  * @Author: MerlinSMQWQ MerlinSMQWQ@proton.me
  * @Date: 2025-12-09 23:25:13
  * @LastEditors: MerlinSMQWQ MerlinSMQWQ@proton.me
- * @LastEditTime: 2025-12-10 20:25:12
+ * @LastEditTime: 2025-12-10 20:42:14
  * @FilePath: \rust-cli-csv-processor\src\main.rs
  * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
  */
@@ -48,9 +48,10 @@ struct  CsvOpts {
 // 定义一个数据结构用于存放CSV解析以后的数据
 #[derive(Debug, Deserialize, Serialize)]
 struct User {
-    #[serde(rename = "NackName")]
+    // 假如结构体的元素命名和实际csv的不匹配，我们就要使用serde(rename)进行重新映射，这里仅仅作为例子，实际上不需要rename
+    #[serde(rename = "nickname")]
     nackname: String,
-    #[serde(rename = "ID")]
+    #[serde(rename = "id")]
     id: usize,
 }
 
@@ -64,15 +65,21 @@ fn verify_input_file(input_file: &str) ->  Result<String, &'static str>{
 }
 
 
-fn main() {
+fn main() -> anyhow::Result<()> {
     let opts = Opts::parse();
     match opts.cmd {
         SubCommand::Csv(opts) => {
-            let mut reader = csv::Reader::from_path(opts.input).unwrap();
+            // 这里的 ? 相当于使用match处理一个Result<foo>类型的值
+            let mut reader = csv::Reader::from_path(opts.input)?;
             // csv::Reader的deserialize方法返回一个迭代器，逐行将CSV的数据反序列化为User类型，这里利用了之前定义的User结构体上的#[derive(Deserialize)]
             // .map(|record| record.unwrap()) record是Result<User, _>类型（因为反序列化可能失败，使用unwrap()提取成功的值，忽略错误处理，将每个Result<User, _>转换为User，而map方法对迭代器中的每个元素应用一个闭包函数，将其转换为另一种类型或值。map返回一个新的迭代器，支持链式调用其他迭代器方法。
             // .collect::<Vec<User>>() 将迭代器收集到Vec<User>向量中，最终得到完整的用户记录集合
-            let records = reader.deserialize().map(|record| record.unwrap()).collect::<Vec<User>>();
+            for result in reader.deserialize() {
+                let record: User = result?;
+                println!("{:?}", record);
+            }
         }
     }
+
+    anyhow::Ok(())
 }
